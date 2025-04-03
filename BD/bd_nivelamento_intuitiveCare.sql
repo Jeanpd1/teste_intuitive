@@ -35,8 +35,6 @@ CREATE TABLE IF NOT EXISTS Operadoras (
     data_registro_ans DATE
 );
 
-ALTER TABLE Operadoras 
-CHANGE COLUMN data_registro data_registro_ans DATE;
 
 -- Tabela Contas_Contabeis (Sem alterações)
 CREATE TABLE IF NOT EXISTS Contas_Contabeis (
@@ -80,16 +78,18 @@ LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
 
 -- Carregar operadoras (Sintaxe corrigida)
+SET sql_mode = '';
+
 LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/dados_operadoras_tratados.csv'
 INTO TABLE Operadoras
 CHARACTER SET utf8mb4
-FIELDS TERMINATED BY ';'
+FIELDS TERMINATED BY ';' 
 OPTIONALLY ENCLOSED BY '"'
 LINES TERMINATED BY '\r\n'
 IGNORE 1 ROWS
 (
-    registro_ans,  -- CHAR(6)
-    cnpj,          -- CHAR(14)
+    registro_ans,
+    cnpj,
     razao_social,
     nome_fantasia,
     modalidade,
@@ -106,27 +106,79 @@ IGNORE 1 ROWS
     endereco_eletronico,
     representante,
     cargo_representante,
-    data_registro_ans
-);
+    @data_registro_ans  -- Variável temporária
+)
+SET data_registro_ans = 
+    STR_TO_DATE(@data_registro_ans, '%Y-%m-%d');  -- Formato corrigido pelo Python
 
+SET SQL_SAFE_UPDATES = 0;  -- Desativa o modo seguro
+
+-- Execute o UPDATE original
+UPDATE Operadoras 
+SET data_registro_ans = 
+    CASE
+        WHEN STR_TO_DATE(data_registro_ans, '%d/%m/%Y') IS NOT NULL 
+        THEN STR_TO_DATE(data_registro_ans, '%d/%m/%Y')
+        ELSE NULL
+    END;
+
+
+ALTER TABLE Operadoras 
+MODIFY data_registro_ans DATE;
+    
 -- Popular Contas Contábeis
 INSERT IGNORE INTO Contas_Contabeis (codigo_conta, descricao)
 SELECT DISTINCT codigo_conta, descricao 
 FROM temp_dados_completos;
 
--- Conversão segura de dados
-INSERT INTO Demonstracoes_Contabeis (data, registro_ans, codigo_conta, saldo_inicial, saldo_final)
-SELECT 
-    CASE
-        WHEN data_str REGEXP '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN STR_TO_DATE(data_str, '%Y-%m-%d')
-        ELSE STR_TO_DATE(data_str, '%d/%m/%Y')
-    END,
-    registro_ans,
-    codigo_conta,
-    CAST(REPLACE(REPLACE(saldo_inicial_str, '.', ''), ',', '.') AS DECIMAL(18,2)),
-    CAST(REPLACE(REPLACE(saldo_final_str, '.', ''), ',', '.') AS DECIMAL(18,2))
-FROM temp_dados_completos;
+DELETE FROM temp_dados_completos 
+WHERE registro_ans NOT IN (SELECT registro_ans FROM Operadoras);
 
+SET SQL_SAFE_UPDATES = 1;  -- Reativa o modo seguro
+
+SET GLOBAL wait_timeout = 600;       -- Padrão: 28800 (8 horas)
+SET GLOBAL interactive_timeout = 600;-- Padrão: 28800
+SET GLOBAL net_read_timeout = 600;   -- Padrão: 30
+SET GLOBAL net_write_timeout = 600;  -- Padrão: 60
+
+CREATE INDEX idx_reg_ans ON Demonstracoes_Contabeis (registro_ans);
+CREATE INDEX idx_cd_conta ON Demonstracoes_Contabeis (codigo_conta);
+
+SET @batch_size = 50000;
+SET @offset = 0;
+
+DELIMITER $$
+
+CREATE PROCEDURE Insert_Demonstracoes_Batch()
+BEGIN
+    DECLARE batch_size INT DEFAULT 50000;
+    DECLARE offset_value INT DEFAULT 0;
+    DECLARE total_rows INT;
+
+    -- Conta quantas linhas existem no arquivo
+    SELECT COUNT(*) INTO total_rows FROM temp_dados_completos;
+
+    -- Loop de inserção em lotes
+    WHILE offset_value < total_rows DO
+        INSERT INTO Demonstracoes_Contabeis (data, registro_ans, codigo_conta, saldo_inicial, saldo_final)
+        SELECT 
+            STR_TO_DATE(DATA, '%Y-%m-%d'),
+            REG_ANS,
+            CD_CONTA_CONTABIL,
+            VL_SALDO_INICIAL,
+            VL_SALDO_FINAL
+        FROM temp_dados_completos
+        LIMIT batch_size OFFSET offset_value;
+
+        -- Atualiza o offset para o próximo lote
+        SET offset_value = offset_value + batch_size;
+    END WHILE;
+END $$
+
+DELIMITER ;
+SELECT COUNT(*) AS total_inseridos FROM Demonstracoes_Contabeis;
+SELECT COUNT(*) AS total_no_csv FROM temp_dados_completos;
+select * from temp_dados_completos limit 100;
 -- ------------------------------------------------------
 -- 3. Índices e Validação (Sintaxe Corrigida)
 -- ------------------------------------------------------
