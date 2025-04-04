@@ -20,10 +20,10 @@ Este script (web_scraping.py) automatiza o processo de download dos Anexos I e I
 - Compacta os PDFs em um único arquivo .zip.
 
 ### Como executar esta sessão:
-1º Verifique se o caminho para o chromedriver está correto:
+1. Verifique se o caminho para o chromedriver está correto:
    chromedriver = r"src\chromedriver.exe"
-2º Instale as bibliotecas necessárias (se ainda não estiverem instaladas):
-3º Execute o Script
+2. Instale as bibliotecas necessárias (se ainda não estiverem instaladas):
+3. Execute o Script
 
 ### Funções do script:
 - download_anexos(chromedriver, link):
@@ -53,12 +53,12 @@ Este script (transformacao_dados.py) tem como objetivo ler e processar automatic
 - Remove o CSV temporário ao final do processo.
 
 ### Como executar esta sessão:
-1º Verifique se os caminhos definidos no script estão corretos:
+1. Verifique se os caminhos definidos no script estão corretos:
    dir_pdf = r"C:\teste_nivelamento_institutecare\arquivos\Anexo_I_Rol_2021RN_465.2021_RN627L.2024.pdf"
    dir_zip = r"C:\teste_nivelamento_institutecare\arquivos\teste_jean_pedersoli.zip"
  O nome do arquivo zipado pode ser alterado normalmente.
-2º Instale as bibliotecas necessárias (se ainda não estiverem instaladas).
-3º Execute o script.
+2. Instale as bibliotecas necessárias (se ainda não estiverem instaladas).
+3. Execute o script.
 
 ### Funções do script:
 - ler_pdf()
@@ -128,9 +128,9 @@ Este módulo implementa uma API REST usando Flask, permitindo realizar buscas po
 - Pandas
 
 ### Como executar esta sessão:
-1º Instale as bibliotecas necessárias (caso ainda não estejam instaladas).
-2º Execute o script.
-3º Acesse a API localmente:
+1. Instale as bibliotecas necessárias (caso ainda não estejam instaladas).
+2. Execute o script.
+3. Acesse a API localmente:
    http://127.0.0.1:5000/buscar?q=amil
 
 É possível conferir um .json com uma coleção de pesquisas feitas através do app Postman em:
@@ -149,10 +149,10 @@ Este componente Vue.js permite realizar buscas em tempo real por operadoras de s
 - Faz as requisições à API Flask (http://127.0.0.1:5000/buscar) conforme o usuário digita.
 
 ## Como usar:
-1º Copie o componente para o diretório components do seu projeto Vue.
-2º Importe e registre o componente no seu app ou página principal:
+1. Copie o componente para o diretório components do seu projeto Vue.
+2. Importe e registre o componente no seu app ou página principal:
    import BuscaOperadoras from "@/components/BuscaOperadoras.vue";
-3º Certifique-se de que o backend Flask esteja rodando localmente.
+3. Certifique-se de que o backend Flask esteja rodando localmente.
 
 
 ## Requisitos:
