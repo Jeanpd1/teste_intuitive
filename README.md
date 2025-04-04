@@ -43,13 +43,13 @@ Este script (web_scraping.py) automatiza o processo de download dos Anexos I e I
 
 ### Estrutura esperada:
 .
-├── src/
-│   └── chromedriver.exe
-├── arquivos/
-│   ├── Anexo I.pdf
-│   ├── Anexo II.pdf
-│   └── rol_procedimentos_eventos_saude.zip
-└── script.py
+|---src/
+|   |---chromedriver.exe
+|---arquivos/
+|   |---Anexo I.pdf
+|   |---Anexo II.pdf
+|   |---rol_procedimentos_eventos_saude.zip
+|---script.py
 
 ### Como executar esta sessão:
 1º Verifique se o caminho para o chromedriver está correto:
@@ -86,10 +86,10 @@ Este script (transformacao_dados.py) tem como objetivo ler e processar automatic
 
 ### Estrutura esperada:
 .
-├── arquivos/
-│   ├── Anexo_I_Rol_2021RN_465.2021_RN627L.2024.pdf
-│   └── teste_jean_pedersoli.zip
-└── script_pdf.py
+|---arquivos/
+|   |-- Anexo_I_Rol_2021RN_465.2021_RN627L.2024.pdf
+|   |-- teste_jean_pedersoli.zip
+|---transformacao_dados.py
 
 ### Como executar esta sessão:
 1º Verifique se os caminhos definidos no script estão corretos:
@@ -111,52 +111,47 @@ Este script (transformacao_dados.py) tem como objetivo ler e processar automatic
 
 -----------------------------------------------------------------------
 
-## Download, Extração e Processamento de Dados da ANS (banco_dados.py)
-
-Este script (banco_dados.py) automatiza o processo de download, descompactação e tratamento de dados públicos disponibilizados pela ANS (Agência Nacional de Saúde Suplementar), incluindo demonstrações contábeis e informações sobre operadoras de planos de saúde ativas.
+## Coleta, Processamento e Correção de Dados da ANS (banco_dados.py)
+Este script (banco_dados.py) realiza web scraping, tratamento de dados e correção de encoding a partir de arquivos disponibilizados pela ANS (Agência Nacional de Saúde Suplementar). Ele automatiza o download, extração, padronização e validação de dados de operadoras e demonstrações contábeis.
 
 ### O que o script faz:
-- Acessa automaticamente os diretórios públicos da ANS via Selenium.
-- Baixa os arquivos trimestrais de demonstrações contábeis (anos de 2023 e 2024).
-- Baixa o arquivo .csv com os dados de operadoras ativas.
-- Descompacta os arquivos .zip baixados.
-- Processa os dados:
-- Concatena arquivos CSV das demonstrações contábeis.
-- Converte valores monetários para formato numérico.
-- Valida dados como CNPJ, código contábil e registro ANS.
-- Gera novos arquivos .csv com os dados tratados, prontos para análise.
+- Acessa automaticamente dois diretórios públicos da ANS.
+- Baixa os arquivos ZIP contendo dados trimestrais de demonstrações contábeis e o arquivo CSV das operadoras.
+- Descompacta os arquivos baixados.
+- Trata e filtra os dados contábeis e cadastrais, validando CNPJ e códigos.
+- Corrige encoding de arquivos com problemas de leitura.
+- Detecta a codificação correta dos arquivos para garantir a compatibilidade.
 
 ### Estrutura esperada:
 .
-├── src/
-│   └── chromedriver.exe
-├── arquivos/
-│   ├── demonstracoes_contabeis/
-│   │   ├── 1T2023.zip
-│   │   ├── 2T2023.zip
-│   │   └── dados_demonstracoes_contabeis_tratados.csv
-│   ├── operadoras_ativas/
-│   │   ├── Relatorio_cadop.csv
-│   │   └── dados_operadoras_tratados.csv
-└── banco_dados.py
+|---src/
+|   |---chromedriver.exe
+|---BD/
+|   |---arquivos_bd/
+|       |---dados_operadoras_tratados.csv
+|       |---dados_operadoras_corrigido.csv
+|       |---dados_demonstracoes_contabeis_tratados.csv
+|---arquivos/
+|   |---demonstracoes_contabeis/
+|   |---operadoras_ativas/
+|---banco_dados.py
 
 ### Como executar esta sessão:
-1º Verifique o caminho do chromedriver:
+1º Verifique se o caminho do chromedriver está correto:
    chromedriver = r"src\chromedriver.exe"
-2º Instale as bibliotecas necessárias (se ainda não estiverem instaladas).
-3º Execute o script
+2º Instale as bibliotecas necessárias (caso ainda não estejam instaladas).
+3º Execute o script.
 
 ### Funções do script:
 - baixar_e_descompactar()
-   Acessa os sites da ANS, baixa os arquivos .zip e descompacta seu conteúdo automaticamente nas pastas configuradas.
+   Automatiza o acesso aos diretórios da ANS, realiza o download dos arquivos ZIP e descompacta-os nas pastas de destino.
 - processar_dados()
-   Lê os arquivos CSV baixados, realiza o tratamento dos dados:
-      - Concatenação de múltiplos arquivos contábeis.
-      - Conversão e padronização de colunas numéricas (ex: valores com vírgula).
-      - Validação de dados como CNPJ, código contábil e número ANS.
-      - Geração de novos arquivos .csv com dados tratados.
+Lê os arquivos CSV de demonstrações contábeis e operadoras, realiza o tratamento dos dados (conversão de valores, validações de CNPJ e código da ANS) e salva os arquivos tratados.
+- testa_corrige_enconding()
+   Corrige encoding problemático do arquivo de operadoras e identifica o encoding correto do arquivo de demonstrações contábeis, testando entre utf-8, latin-1 e windows-1252.
 
 ### Observações importantes:
-- O tempo de espera após cada clique pode ser ajustado (via time.sleep) de acordo com a velocidade da internet.
-- Em caso de alteração na estrutura dos diretórios da ANS, os seletores e caminhos precisarão ser atualizados.
-- É fundamental garantir a compatibilidade entre o Chrome instalado e a versão do chromedriver utilizada.
+- Certifique-se de que a versão do Chrome instalada seja compatível com o chromedriver utilizado.
+- O tempo de espera entre downloads (time.sleep(5)) pode ser ajustado conforme a velocidade da internet.
+- O script já inclui tratamento de erros para lidar com ausências de arquivos ou falhas de leitura.
+

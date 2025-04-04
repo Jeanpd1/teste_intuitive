@@ -7,7 +7,7 @@ with open("./dados_operadoras_tratados.csv", 'r', encoding='utf-8') as f:
 
 print('Identifica o encoding correto:')
 encodings = ['utf-8', 'latin-1', 'windows-1252']
-path = './dados_demonstracoes_contabeis_tratados.csv'
+path = 'dados_demonstracoes_contabeis_tratados.csv'
 for enc in encodings:
     try:
         with open(path, 'r', encoding=enc) as f:

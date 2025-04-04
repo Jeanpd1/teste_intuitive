@@ -1,0 +1,75 @@
+{
+	"info": {
+		"_postman_id": "ddfec9bc-2377-43fe-ae67-49a06a473c9a",
+		"name": "coleção_resultados_intuitivecare",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "43742536",
+		"_collection_link": "https://jean-5007054.postman.co/workspace/Jean's-Workspace~f0d7490b-68ec-4319-8dfd-3c68b2f412bd/collection/43742536-ddfec9bc-2377-43fe-ae67-49a06a473c9a?action=share&source=collection_link&creator=43742536"
+	},
+	"item": [
+		{
+			"name": "Unimed",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/buscar?q=unimed\n",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"buscar"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "unimed\n"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Amil",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/buscar?q=amil",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"buscar"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "amil"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Alice",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
