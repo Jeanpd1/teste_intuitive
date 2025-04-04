@@ -1,9 +1,12 @@
 # Testes de nivelamento Intuitive Care
+------------------------------------------------
 
 ## Requisitos
 
 - [Python 3.10+](https://www.python.org/)
 - [Docker](https://www.docker.com/)
+
+---------------------------------------------------------
 
 ## Download e Compactação dos Anexos do Rol de Procedimentos da ANS (Web Scraping)
 
@@ -15,16 +18,6 @@ Este script (web_scraping.py) automatiza o processo de download dos Anexos I e I
 - Baixa os arquivos PDF dos Anexos I e II.
 - Salva os arquivos em uma pasta local definida.
 - Compacta os PDFs em um único arquivo .zip.
-
-### Estrutura esperada:
-.
-|---src/
-|   |---chromedriver.exe
-|---arquivos/
-|   |---Anexo I.pdf
-|   |---Anexo II.pdf
-|   |---rol_procedimentos_eventos_saude.zip
-|---script.py
 
 ### Como executar esta sessão:
 1º Verifique se o caminho para o chromedriver está correto:
@@ -43,7 +36,7 @@ Este script (web_scraping.py) automatiza o processo de download dos Anexos I e I
 - O tempo de espera após o download (time.sleep(8)) pode ser ajustado conforme a velocidade da internet.
 - Em caso de mudanças na estrutura da página da ANS, os seletores XPATH precisarão ser atualizados.
 
-----------------
+----------------------------------------------------------------------
 
 ## Leitura e Processamento de PDF da ANS (Transformação de dados)
 
@@ -58,13 +51,6 @@ Este script (transformacao_dados.py) tem como objetivo ler e processar automatic
 - Gera um .csv temporário com os dados extraídos.
 - Compacta o arquivo .csv em um .zip.
 - Remove o CSV temporário ao final do processo.
-
-### Estrutura esperada:
-.
-|---arquivos/
-|   |-- Anexo_I_Rol_2021RN_465.2021_RN627L.2024.pdf
-|   |-- teste_jean_pedersoli.zip
-|---transformacao_dados.py
 
 ### Como executar esta sessão:
 1º Verifique se os caminhos definidos no script estão corretos:
@@ -97,22 +83,7 @@ Este script (banco_dados.py) realiza web scraping, tratamento de dados e correç
 - Corrige encoding de arquivos com problemas de leitura.
 - Detecta a codificação correta dos arquivos para garantir a compatibilidade.
 
-### Estrutura esperada:
-.
-|---src/
-|   |---chromedriver.exe
-|---BD/
-|   |---arquivos_bd/
-|       |---dados_operadoras_tratados.csv
-|       |---dados_operadoras_corrigido.csv
-|       |---dados_demonstracoes_contabeis_tratados.csv
-|---arquivos/
-|   |---demonstracoes_contabeis/
-|   |---operadoras_ativas/
-|---banco_dados.py
-
 ### Como executar esta sessão:
-
 1. Verifique se o caminho do chromedriver está correto:
    chromedriver = r"src\chromedriver.exe" 
 2. Instalar o Python 3.10+
