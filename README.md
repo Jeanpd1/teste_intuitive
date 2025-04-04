@@ -27,9 +27,9 @@ Este script (web_scraping.py) automatiza o processo de download dos Anexos I e I
 
 ### Funções do script:
 - download_anexos(chromedriver, link):
-   Automatiza o acesso ao site da ANS e realiza o download dos anexos.
+Automatiza o acesso ao site da ANS e realiza o download dos anexos.
 - compactar_anexos(download_dir, zip_nome): 
-   Compacta os arquivos PDF baixados em um .zip.
+Compacta os arquivos PDF baixados em um .zip.
 
 ### Observações importantes:
 - Certifique-se de que o chromedriver seja compatível com a versão do seu navegador Chrome.
@@ -62,7 +62,7 @@ Este script (transformacao_dados.py) tem como objetivo ler e processar automatic
 
 ### Funções do script:
 - ler_pdf()
-   Lê o PDF da ANS, extrai tabelas, realiza substituições padronizadas, salva os dados em CSV e gera um .zip com o conteúdo final.
+Lê o PDF da ANS, extrai tabelas, realiza substituições padronizadas, salva os dados em CSV e gera um .zip com o conteúdo final.
 
 ### Observações importantes:
 - O script assume que o PDF segue a estrutura padrão utilizada pela ANS.
@@ -101,11 +101,11 @@ Este script (banco_dados.py) realiza web scraping, tratamento de dados e correç
 
 ### Funções do script:
 - baixar_e_descompactar()
-   Automatiza o acesso aos diretórios da ANS, realiza o download dos arquivos ZIP e descompacta-os nas pastas de destino.
+Automatiza o acesso aos diretórios da ANS, realiza o download dos arquivos ZIP e descompacta-os nas pastas de destino.
 - processar_dados()
 Lê os arquivos CSV de demonstrações contábeis e operadoras, realiza o tratamento dos dados (conversão de valores, validações de CNPJ e código da ANS) e salva os arquivos tratados.
 - testa_corrige_enconding()
-   Corrige encoding problemático do arquivo de operadoras e identifica o encoding correto do arquivo de demonstrações contábeis, testando entre utf-8, latin-1 e windows-1252.
+Corrige encoding problemático do arquivo de operadoras e identifica o encoding correto do arquivo de demonstrações contábeis, testando entre utf-8, latin-1 e windows-1252.
 
 ### Observações importantes:
 - Certifique-se de que a versão do Chrome instalada seja compatível com o chromedriver utilizado.
