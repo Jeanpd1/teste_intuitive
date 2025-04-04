@@ -1,8 +1,10 @@
+# Importação das bibliotecas
 import pdfplumber
 import pandas as pd
 import zipfile
 import os
 
+# Definição da função
 def ler_pdf():
     '''
     Lê um arquivo PDF com dados da ANS, processa as tabelas internas e gera um arquivo ZIP contendo os dados em CSV. 
@@ -53,5 +55,7 @@ def ler_pdf():
         if os.path.exists(csv_temp):
             os.remove(csv_temp)
 
-# Executar o processo
-ler_pdf()
+
+# Execução
+if __name__ == '__main__':
+    ler_pdf()

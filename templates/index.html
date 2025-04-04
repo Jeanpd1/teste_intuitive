@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar Operadoras</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        input {
+            padding: 8px;
+            width: 250px;
+        }
+        button {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        #resultado {
+            margin-top: 20px;
+            text-align: left;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Buscar Operadoras</h1>
+    <input type="text" id="termo" placeholder="Digite um termo...">
+    <button onclick="buscarOperadora()">Buscar</button>
+
+    <div id="resultado"></div>
+
+    <script>
+        function buscarOperadora() {
+            const termo = document.getElementById("termo").value;
+            if (!termo) {
+                alert("Digite um termo para buscar!");
+                return;
+            }
+
+            fetch(`/api/busca?termo=${termo}`)
+                .then(response => response.json())
+                .then(data => {
+                    let resultadoDiv = document.getElementById("resultado");
+                    resultadoDiv.innerHTML = "<h2>Resultados:</h2>";
+
+                    if (data.length === 0) {
+                        resultadoDiv.innerHTML += "<p>Nenhum resultado encontrado.</p>";
+                        return;
+                    }
+
+                    let lista = "<ul>";
+                    data.forEach(item => {
+                        lista += `<li>${JSON.stringify(item)}</li>`;
+                    });
+                    lista += "</ul>";
+
+                    resultadoDiv.innerHTML += lista;
+                })
+                .catch(error => console.error("Erro:", error));
+        }
+    </script>
+</body>
+</html>

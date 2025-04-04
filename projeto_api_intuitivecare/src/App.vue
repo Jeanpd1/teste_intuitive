@@ -1,7 +1,22 @@
 <script setup>
 import BuscaOperadoras from './components/BuscaOperadoras.vue';
 </script>
+<template>
+  <div id="app">
+    <BuscaOperadoras />
+  </div>
+</template>
 
+<script>
+import BuscaOperadoras from './components/busca_operadoras.vue';
+
+export default {
+  name: 'App',
+  components: {
+    BuscaOperadoras
+  }
+};
+</script>
 <template>
   <div>
     <header>

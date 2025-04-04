@@ -58,6 +58,12 @@ def download_anexos(chromedriver, link):
     except Exception as e:
         print(f'Ocorreu um erro: {e.__class__.__name__}')
 def compactar_anexos(download_dir, zip_nome):
+    '''
+    Compacta arquivos PDF do diretório especificado em um ZIP, criando a pasta destino se necessário.
+    Mantém apenas os nomes dos arquivos na estrutura, usa compressão DEFLATED e trata exceções.
+    Requer caminhos completos para o diretório e arquivo ZIP.
+    Imprime status do processo e mensagens de erro.
+    '''
     try:
         # Cria diretório para o ZIP se não existir
         os.makedirs(os.path.dirname(zip_nome), exist_ok=True)
@@ -85,5 +91,8 @@ diretorio = r"C:\teste_nivelamento_institutecare\arquivos"  # Diretório de down
 zip_nome = r"C:\teste_nivelamento_institutecare\arquivos\rol_procedimentos_eventos_saude.zip"
 
 # Execução
-download_anexos(chromedriver, link)
-compactar_anexos(diretorio, zip_nome)
+if __name__ == '__main__':
+    download_anexos(chromedriver, link)
+    compactar_anexos(diretorio, zip_nome)
+
+    

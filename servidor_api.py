@@ -1,27 +1,47 @@
-from flask import Flask, jsonify, request
-from flask_cors import CORS
+# Importação das bibliotecas
+from flask import Flask, request, jsonify
 import pandas as pd
 
-app = Flask(__name__)
-CORS(app)
+# Definição da função
+def create_app(csv_path: str) -> Flask:
+    """
+    Cria e configura a aplicação Flask para busca de operadoras.
+    Argumentos: csv_path (str): Caminho para o arquivo CSV contendo os dados das operadoras.
+    Retornos: Instância da aplicação Flask configurada.
+    """
+    app = Flask(__name__)
 
-# Carregar o CSV
-csv_path = r"arquivos\operadoras_ativas\dados_operadoras_tratados.csv"
-df = pd.read_csv(csv_path, sep=";", on_bad_lines="skip", engine="python", encoding="utf-8")
+    try:
+        df = pd.read_csv(csv_path, sep=None, engine="python", encoding="utf-8") # Carregar o CSV corretamente        
+        df.columns = df.columns.str.strip().str.lower() # Corrigir nomes de colunas e garantir consistência        
+        coluna_busca = "nome_fantasia"  # Usar a coluna correta para busca
+        df[coluna_busca] = df[coluna_busca].astype(str).str.lower()
+    except Exception as e:
+        raise RuntimeError(f"Erro ao carregar ou processar o CSV: {e}")
 
+    @app.route("/buscar", methods=["GET"])
+    def buscar_operadora():
+        """
+        Rota para buscar operadoras pelo nome fantasia.
+        Parâmetros:q (str): Termo de busca enviado como query parameter.
+        Retorna:JSON: Lista de registros que contêm o termo buscado.
+        """
+        try:
+            termo = request.args.get("q", "").strip().lower()
+            if not termo:
+                return jsonify({"erro": "Parâmetro 'q' é obrigatório"}), 400
 
-# Rota de busca textual
-@app.route('/api/busca', methods=['GET'])
-def buscar_operadora():
-    termo = request.args.get('termo', '').lower()
+            resultados = df[df[coluna_busca].str.contains(termo, na=False, case=False)]
+            return jsonify(resultados.to_dict(orient="records"))
+        except Exception as e:
+            return jsonify({"erro": f"Erro ao processar a requisição: {str(e)}"}), 500
 
-    if not termo:
-        return jsonify({"erro": "Parâmetro 'termo' é obrigatório"}), 400
+    return app
 
-    # Filtrar registros que contenham o termo
-    resultados = df[df.apply(lambda row: row.astype(str).str.contains(termo, case=False).any(), axis=1)]
+# Variável
+CSV_PATH = "BD/arquivos/dados_operadoras_tratados_corrigido.csv"
 
-    return jsonify(resultados.to_dict(orient="records"))
-
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+# Execução
+if __name__ == "__main__":
+    app = create_app(CSV_PATH)
+    app.run(debug=True)
