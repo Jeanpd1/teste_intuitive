@@ -10,6 +10,7 @@ import time
 import os
 import zipfile
 
+
 # Definição de funções
 def baixar_e_descompactar():
     '''
@@ -63,6 +64,8 @@ def baixar_e_descompactar():
                     
     except Exception as e:
         print(f"Erro: {str(e)}")
+
+
 def processar_dados():
     '''
     Processa e trata os dados baixados, unifica arquivos CSV de demonstrações contábeis, 
@@ -88,7 +91,8 @@ def processar_dados():
                 df_contabil['CD_CONTA_CONTABIL'].str.match(r'^\d{8}$')
             ]
             
-            df_contabil.to_csv('./arquivos/demonstracoes_contabeis/dados_demonstracoes_contabeis_tratados.csv', sep=';', index=False)
+            df_contabil.to_csv('BD/arquivos_bd/dados_demonstracoes_contabeis_tratados.csv', 
+                               sep=';', index=False)
             print('Dados contabeis salvos!')
 
         # Processa o arquivo de Operadoras
@@ -106,7 +110,7 @@ def processar_dados():
                 df_operadoras['CNPJ'].str.match(r'^\d{14}$')
             ]
             
-            df_operadoras.to_csv('./arquivos/operadoras_ativas/dados_operadoras_tratados.csv', sep=';', index=False)
+            df_operadoras.to_csv('BD/arquivos_bd/dados_operadoras_tratados.csv', sep=';', index=False)
             print('Dados das operadoras salvos!')
             
         except FileNotFoundError:
@@ -114,6 +118,31 @@ def processar_dados():
 
     except Exception as e:
         print(f'Ocorreu um erro: {str(e)}')
+
+
+def testa_corrige_enconding():
+    try:        
+        print('Correção do arquivo dados_operadoras_tratados para tratar o encoding:')
+        with open("BD/arquivos_bd/dados_operadoras_tratados.csv", 'r', encoding='latin-1') as f:
+            with open('BD/arquivos_bd/dados_operadoras_corrigido.csv', 'w', encoding='utf-8') as fw:
+                texto_errado = f.read()
+                texto_correto = texto_errado.encode('latin-1').decode('utf-8')
+                fw.write(texto_correto)
+
+        print('Identifica o encoding correto:')
+        encodings = ['utf-8', 'latin-1', 'windows-1252']
+        path = 'BD/arquivos_bd/dados_demonstracoes_contabeis_tratados.csv'
+        for enc in encodings:
+            try:
+                with open(path, 'r', encoding=enc) as f:
+                    f.read()
+                    print(f"Encoding do arquivo {path} correto: {enc}")
+                    break
+            except UnicodeDecodeError:
+                continue
+    except Exception as e:
+        print(f"Erro durante a execução: {str(e)}")
+
 
 # Variáveis
 chromedriver = r"src\chromedriver.exe"
@@ -130,5 +159,7 @@ diretorios = {
 
 # Execução
 if __name__ == "__main__":
-    baixar_e_descompactar()
-    processar_dados()
+    # baixar_e_descompactar()
+    # processar_dados()
+    testa_corrige_enconding()
+    
