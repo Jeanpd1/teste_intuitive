@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+
+  init:
+    image: python:3.10
+    volumes:
+      - ./BD/arquivos_bd:/scripts
+    command: sh -c "ls /scripts && python3 /scripts/testa_encodings.py && echo 'Tratou encodings' && "
+
+  mysql:
+    image: mysql:latest
+    container_name: intuitivecare_bd
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+      - "33060:33060"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - mysql_files:/var/lib/mysql-files
+      - ./BD/arquivos_bd:/var/lib/mysql-files
+      - ./BD/docker-configs:/var/lib/mysql
+      - ./BD/dump_intuitivecare_bd.sql:/docker-entrypoint-initdb.d/init.sql
+    depends_on:
+      - init
+
+volumes:
+  mysql_data:
+  mysql_files:

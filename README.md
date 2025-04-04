@@ -1,34 +1,9 @@
-# Teste Intuitive
+# Testes de nivelamento Intuitive Care
 
-## Criar ambiente [virtual](https://virtualenv.pypa.io/en/latest/user_guide.html) (isolamento)
+## Requisitos
 
-python -m venv venv
-
-## Executar o docker no PowerShell
-
-- `docker run --name intuitivecare_bd -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 -p 33060:33060 -v "C:\CAMINHO_COMPLETO\docker-configs\intuitivecare_bd":/var/lib/mysql -v "C:\CAMINHO_COMPLETO\arquivos":/var/lib/mysql-files/ -d mysql:latest`
-- `docker exec -i intuitivecare_bd mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS bd_nivelamento_intuitiveCare;"`
-- `docker exec -i intuitivecare_bd mysql -u root -proot bd_nivelamento_intuitiveCare < "C:\CAMINHO_COMPLETO\BD\bd_nivelamento_intuitiveCare.sql"`
-- `Get-Content "C:\teste_nivelamento_institutecare\BD\bd_nivelamento_intuitiveCare.sql" | docker exec -i intuitivecare_bd mysql -u root -proot bd_nivelamento_intuitiveCare.sql`
-- `docker exec -it intuitivecare_bd bash`
-
-## Passos
-
-1. PASSO 1 DOCUMENTADO AQUI
-   - DETALHE 1
-   - DETALHE 2
-2. PASSO 2 DOCUMENTADO AQUI
-   - DETALHE 1
-   - DETALHE 2
-3. TESTE DE BANCO DE DADOS
-   - Mova os arquivos dentro de BD/arquivos
-   - Execute o script testa_encodings.py, ele vai verificar o encoding e gerar o arquivo `dados_operadoras_tratados_corrigido.csv`
-   - 
-
-## Conectar com outros clientes no docker (DBeaver)
-
-- jdbc:mysql://localhost:3306?allowPublicKeyRetrieval=true&useSSL=false
-
+- [Python 3.10+](https://www.python.org/)
+- [Docker](https://www.docker.com/)
 
 ## Download e Compactação dos Anexos do Rol de Procedimentos da ANS (Web Scraping)
 
@@ -137,10 +112,21 @@ Este script (banco_dados.py) realiza web scraping, tratamento de dados e correç
 |---banco_dados.py
 
 ### Como executar esta sessão:
-1º Verifique se o caminho do chromedriver está correto:
-   chromedriver = r"src\chromedriver.exe"
-2º Instale as bibliotecas necessárias (caso ainda não estejam instaladas).
-3º Execute o script.
+
+1. Verifique se o caminho do chromedriver está correto:
+   chromedriver = r"src\chromedriver.exe" 
+2. Instalar o Python 3.10+
+3. Executar (Opcional): `python -m venv venv`
+4. Executar: `pip install -r requirements.txt`
+5. Executar na raiz do projeto o start.bat
+   - Ele extrai o arquivo BD/dump_intuitivecare_bd.zip para BD/dump_intuitivecare_bd.sql
+   - Obs.: Necessário para criar toda a base.
+6. Executar o docker-compose na raiz do projeto: `docker-compose up -d`
+   - Acesso com o Workbench MySQL ou o DBeaver e veja se as bases foram criadas e estão preenchidas
+   - Obs.: Para acessar com o DBeaver, siga os passos abaixo:
+     - URL: jdbc:mysql://localhost:3306?allowPublicKeyRetrieval=true&useSSL=false
+     - Senha: root
+7. Execute o BD\3_analises.sql, nele contém queries de análie trismestral e anual.
 
 ### Funções do script:
 - baixar_e_descompactar()
@@ -155,3 +141,49 @@ Lê os arquivos CSV de demonstrações contábeis e operadoras, realiza o tratam
 - O tempo de espera entre downloads (time.sleep(5)) pode ser ajustado conforme a velocidade da internet.
 - O script já inclui tratamento de erros para lidar com ausências de arquivos ou falhas de leitura.
 
+--------------------------------------------------------------
+
+## API de Busca de Operadoras (servidor_api)
+Este módulo implementa uma API REST usando Flask, permitindo realizar buscas por operadoras de saúde com base no nome fantasia, a partir de um arquivo CSV processado.
+
+### O que o script faz:
+- Carrega os dados de operadoras de um arquivo CSV previamente tratado e corrigido.
+- Expõe uma rota /buscar que aceita um parâmetro q (query string) para buscar registros cujo nome fantasia contenha o termo informado.
+- Retorna os resultados em formato JSON.
+
+### Requisitos
+- Python 3.8+
+- Flask
+- Pandas
+
+### Como executar esta sessão:
+1º Instale as bibliotecas necessárias (caso ainda não estejam instaladas).
+2º Execute o script.
+3º Acesse a API localmente:
+   http://127.0.0.1:5000/buscar?q=amil
+
+É possível conferir um .json com uma coleção de pesquisas feitas através do app Postman em:
+   Docs\coleção_resultados_intuitivecare.postman_collection.json
+   
+Esse Script roda em conjunto com arquivo .vue que está na próxima seção.
+
+-----------------------------------------------------------------------------
+
+## Interface Web (busca_operadora.vue)
+Este componente Vue.js permite realizar buscas em tempo real por operadoras de saúde, conectando-se à API Flask local.
+
+### O que o componente faz:
+- Permite digitar um termo (mínimo de 3 caracteres) para buscar operadoras.
+- Exibe os resultados com nome fantasia, CNPJ, cidade e UF.
+- Faz as requisições à API Flask (http://127.0.0.1:5000/buscar) conforme o usuário digita.
+
+## Como usar:
+1º Copie o componente para o diretório components do seu projeto Vue.
+2º Importe e registre o componente no seu app ou página principal:
+   import BuscaOperadoras from "@/components/BuscaOperadoras.vue";
+3º Certifique-se de que o backend Flask esteja rodando localmente.
+
+
+## Requisitos:
+- Projeto Vue.js já configurado (Vue CLI ou Vite).
+- Backend Flask rodando localmente com o endpoint /busca
