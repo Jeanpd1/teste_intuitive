@@ -1,4 +1,4 @@
-# Sistema para consulta-de operadoras na ANS
+# Sistema para consulta de operadoras na ANS
 ------------------------------------------------
 
 ## Requisitos
